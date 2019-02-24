@@ -2,6 +2,7 @@ package com.bobby.DoseFM.chat;
 
 import android.app.Activity;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,8 +13,10 @@ import android.widget.Toast;
 
 import com.bobby.DoseFM.R;
 import com.bobby.DoseFM.model.Message;
+import com.bobby.DoseFM.model.MessageList;
 import com.bobby.DoseFM.utils.ConnectivityReceiver;
 import com.bobby.DoseFM.model.MessageItem;
+import com.bobby.DoseFM.utils.Constants;
 import com.muddzdev.styleabletoast.StyleableToast;
 
 import java.util.ArrayList;
@@ -40,12 +43,17 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
     private IntentFilter intentFilter;
     private ConnectivityReceiver receiver;
     private ChatPresenter presenter;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_center);
-        presenter=new ChatPresenter(this);
+
+        pref = getSharedPreferences(Constants.CHAT_HISTORY, 0);
+        editor = pref.edit();
+        presenter=new ChatPresenter(pref,editor,this);
         mActivity = this;
 
         renderView();
@@ -69,7 +77,21 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        arrayListMessages = new ArrayList<>();
+        if(presenter.getChatHistory()!=null){
+            arrayListMessages = presenter.getChatHistory().getMessageList();                             //Fetch Chat History
+        }
+
+
+        if(arrayListMessages==null){
+            arrayListMessages = new ArrayList<>();
+        }
+        else {
+            tv_empty.setVisibility(View.GONE);
+            img_empty.setVisibility(View.GONE);
+            messagesAdapter = new ChatMessagesAdapter(mActivity, arrayListMessages,recyclerView);    //Display previous chat history
+            recyclerView.setAdapter(messagesAdapter);
+            recyclerView.scrollToPosition(arrayListMessages.size() - 1);
+        }
 
         intentFilter = new IntentFilter();
         intentFilter.addAction(CONNECTIVITY_ACTION);
@@ -131,7 +153,12 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
             messagesAdapter.notifyDataSetChanged();
             recyclerView.scrollToPosition(arrayListMessages.size() - 1);
         }
+
+        MessageList messageList=new MessageList();
+        messageList.setMessageList(arrayListMessages);
+        presenter.storeChatHistory(messageList);              //Update chat history
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -142,7 +169,6 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isNetworkAvailable != isConnected) {
-
             if (isConnected) {
                 StyleableToast.makeText(this, getString(R.string.connected), Toast.LENGTH_LONG, R.style.successToast).show();
                 img_btn_send.setEnabled(true);

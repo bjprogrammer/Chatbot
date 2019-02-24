@@ -1,7 +1,7 @@
 package com.bobby.DoseFM.chat;
 
-
 import com.bobby.DoseFM.model.MessageItem;
+import com.bobby.DoseFM.model.MessageList;
 
 public class ChatContract {
     interface ChatView {
@@ -12,5 +12,7 @@ public class ChatContract {
     interface Presenter{
         void cleanMemory();
         void sendMessage(String message);
+        void storeChatHistory(MessageList response);
+        MessageList getChatHistory();
     }
 }

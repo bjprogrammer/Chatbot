@@ -1,15 +1,23 @@
 package com.bobby.DoseFM.chat;
 
+import android.content.SharedPreferences;
+
 import com.bobby.DoseFM.model.MessageItem;
+import com.bobby.DoseFM.model.MessageList;
 import com.bobby.DoseFM.network.NetworkError;
 import com.bobby.DoseFM.network.Service;
+import com.bobby.DoseFM.utils.Constants;
+import com.google.gson.Gson;
 
 
 public class ChatPresenter implements ChatContract.Presenter{
-
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
     private ChatContract.ChatView view;
 
-    ChatPresenter( ChatContract.ChatView view) {
+    ChatPresenter(SharedPreferences pref, SharedPreferences.Editor editor, ChatContract.ChatView view) {
+        this.editor = editor;
+        this.pref = pref;
         this.view = view;
     }
 
@@ -39,4 +47,19 @@ public class ChatPresenter implements ChatContract.Presenter{
             Service.disposable.dispose();
         }
     }
+
+    public void storeChatHistory(MessageList response) {
+        Gson gson = new Gson();
+        String json = gson.toJson(response);
+        editor.putString(Constants.CHAT, json);
+        editor.commit();
+    }
+
+    public MessageList getChatHistory() {
+        Gson gson = new Gson();
+        String json = pref.getString(Constants.CHAT, "");
+        return gson.fromJson(json,MessageList.class);
+    }
+
+
 }
