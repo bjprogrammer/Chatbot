@@ -6,7 +6,6 @@ import com.bobby.DoseFM.model.MessageItem;
 import com.bobby.DoseFM.model.MessageList;
 import com.bobby.DoseFM.network.NetworkError;
 import com.bobby.DoseFM.network.Service;
-import com.bobby.DoseFM.utils.Constants;
 import com.google.gson.Gson;
 
 
@@ -48,16 +47,16 @@ public class ChatPresenter implements ChatContract.Presenter{
         }
     }
 
-    public void storeChatHistory(MessageList response) {
+    public void storeChatHistory(MessageList response, String category) {
         Gson gson = new Gson();
         String json = gson.toJson(response);
-        editor.putString(Constants.CHAT, json);
+        editor.putString(category, json);
         editor.commit();
     }
 
-    public MessageList getChatHistory() {
+    public MessageList getChatHistory(String category) {
         Gson gson = new Gson();
-        String json = pref.getString(Constants.CHAT, "");
+        String json = pref.getString(category, "");
         return gson.fromJson(json,MessageList.class);
     }
 

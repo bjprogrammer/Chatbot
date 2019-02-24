@@ -6,5 +6,6 @@ public class Constants {
     public static final String EXTERNAL_ID ="rishabh876";
     public static final String CHAT_HISTORY ="CHAT_HISTORY";
     public static final String CHAT ="CHAT";
+    public static final String ENQUEUE_CHAT ="ENQUEUE_CHAT";
 
 }

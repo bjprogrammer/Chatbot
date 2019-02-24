@@ -45,6 +45,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
     private ChatPresenter presenter;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private  ArrayList<Message> queueListMessages;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +78,8 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        if(presenter.getChatHistory()!=null){
-            arrayListMessages = presenter.getChatHistory().getMessageList();                             //Fetch Chat History
+        if(presenter.getChatHistory(Constants.CHAT)!=null){
+            arrayListMessages = presenter.getChatHistory(Constants.CHAT).getMessageList();                             //Fetch Chat History
         }
 
 
@@ -114,11 +115,33 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
                         presenter.sendMessage(str_message);                      //Sending message to server chatbot
                     }
                     else{
-                        StyleableToast.makeText(mActivity, getString(R.string.check_internet), Toast.LENGTH_LONG, R.style.successToast).show();
+//                        StyleableToast.makeText(mActivity, getString(R.string.check_internet), Toast.LENGTH_LONG, R.style.successToast).show();
+
+                        String str_message = et_message.getText().toString();
+                        et_message.setText("");
+                        setMessage("Me",str_message);
                     }
 
                 }catch (Exception e){
                     e.getMessage();
+                }
+            }
+        });
+
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v,
+                                       int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(arrayListMessages.size()>0) {
+                                recyclerView.smoothScrollToPosition(arrayListMessages.size() - 1);
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -141,7 +164,11 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
         messageItem.setDate(System.currentTimeMillis());
         messageItem.setSenderName(sender);
         messageItem.setMessage(message);
+
         arrayListMessages.add(messageItem);
+        MessageList messageList=new MessageList();
+        messageList.setMessageList(arrayListMessages);
+        presenter.storeChatHistory(messageList, Constants.CHAT);             //Update chat history
 
         tv_empty.setVisibility(View.GONE);
         img_empty.setVisibility(View.GONE);
@@ -154,9 +181,14 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
             recyclerView.scrollToPosition(arrayListMessages.size() - 1);
         }
 
-        MessageList messageList=new MessageList();
-        messageList.setMessageList(arrayListMessages);
-        presenter.storeChatHistory(messageList);              //Update chat history
+        handleQueueMessages();
+
+        if(!isNetworkAvailable && sender.equals("Me")){
+            queueListMessages.add(messageItem);
+            MessageList queueMessageList=new MessageList();
+            queueMessageList.setMessageList(queueListMessages);
+            presenter.storeChatHistory(queueMessageList, Constants.ENQUEUE_CHAT);
+        };
     }
 
     @Override
@@ -171,23 +203,49 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.Chat
         if (isNetworkAvailable != isConnected) {
             if (isConnected) {
                 StyleableToast.makeText(this, getString(R.string.connected), Toast.LENGTH_LONG, R.style.successToast).show();
-                img_btn_send.setEnabled(true);
+//                img_btn_send.setEnabled(true);
             } else {
                 StyleableToast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_LONG, R.style.warningToast).show();
-                img_btn_send.setEnabled(false);
+//                img_btn_send.setEnabled(false);
             }
         }
         isNetworkAvailable = (isConnected);
+
+        handleQueueMessages();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         if (receiver != null) {
             unregisterReceiver(receiver);            //Stopping internet connection check
         }
+
         presenter.cleanMemory();                     //Disposing Rxjava call
+    }
+
+
+    private void handleQueueMessages(){
+        if(presenter.getChatHistory(Constants.ENQUEUE_CHAT)!=null)
+        {
+            queueListMessages = presenter.getChatHistory(Constants.ENQUEUE_CHAT).getMessageList();
+        }
+
+        if(queueListMessages == null){
+            queueListMessages = new ArrayList<>();
+        }
+
+        if(isNetworkAvailable && queueListMessages!=null){
+            if(queueListMessages.size()>0){
+                String userMessage= queueListMessages.get(0).getMessage();
+                queueListMessages.remove(0);
+                MessageList queueMessageList=new MessageList();
+                queueMessageList.setMessageList(queueListMessages);
+                presenter.storeChatHistory(queueMessageList,Constants.ENQUEUE_CHAT);
+                presenter.sendMessage(userMessage);
+            }
+        }
+
     }
 }
 

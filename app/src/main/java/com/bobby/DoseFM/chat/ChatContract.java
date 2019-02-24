@@ -12,7 +12,7 @@ public class ChatContract {
     interface Presenter{
         void cleanMemory();
         void sendMessage(String message);
-        void storeChatHistory(MessageList response);
-        MessageList getChatHistory();
+        void storeChatHistory(MessageList response,String category);
+        MessageList getChatHistory(String category);
     }
 }
