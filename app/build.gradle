@@ -8,7 +8,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "BASEURL", "\"http://www.personalityforge.com/\"";
+        buildConfigField "String", "BASEURL", "\"https://www.personalityforge.com/\"";
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
