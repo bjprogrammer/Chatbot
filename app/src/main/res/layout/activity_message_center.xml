@@ -1,0 +1,172 @@
+<androidx.drawerlayout.widget.DrawerLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_height="50dp"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:titleTextAppearance="@style/toolbar_title_style"
+            android:id="@+id/toolbar_message"
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimary"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:id="@+id/placeholder"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            tools:context="com.bobby.DoseFM.chat.MainActivity">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:id="@+id/listview_message"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="60dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true">
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/ask_from_chatbot"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tv_empty"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:layout_below="@+id/empty_img"
+                android:visibility="visible"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="visible"
+                android:src="@drawable/icon_chat"
+                android:id="@+id/empty_img"
+                android:layout_height="65dp"
+                android:contentDescription="@string/todo" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_toStartOf="@+id/send"
+                android:visibility="gone"
+                app:cardUseCompatPadding="true"
+                android:minHeight="60dp"
+                android:layout_marginRight="5dp"
+                app:cardElevation="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="4dp"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:inputType="textMultiLine"
+                    android:layout_marginTop="2dp"
+                    android:scrollHorizontally="false"
+                    android:paddingTop="7dp"
+                    android:hint="@string/type_message_here"
+                    android:layout_toStartOf="@+id/send"
+                    android:scrollbars="vertical"
+                    android:paddingStart="20dp"
+                    android:ems="10"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="5dp"
+                    android:id="@+id/et_message_text"
+                    android:layout_alignTop="@+id/send"
+                    android:importantForAutofill="no"
+                    tools:targetApi="o" />
+            </androidx.cardview.widget.CardView>
+
+
+            <ImageButton
+                android:layout_width="70dp"
+                android:layout_height="47dp"
+                android:text="@string/send"
+                android:src="@drawable/send_button"
+                android:scaleType="centerInside"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:layout_marginBottom="10dp"
+                android:paddingRight="8dp"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_primary_color_button_selector"
+                android:id="@+id/send"
+                android:textSize="15sp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/todo" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_alignParentBottom="true">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_text"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="15dp"
+                    app:cardCornerRadius="30dp"
+                    android:layout_marginEnd="60dp"
+                    android:layout_height="55dp">
+
+                    <EditText
+                        android:id="@+id/et_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingStart="25dp"
+                        android:background="@null"
+                        android:paddingEnd="20dp"
+                        android:inputType="textMultiLine"
+                        android:hint="@string/type_something"
+                        android:importantForAutofill="no"
+                        tools:targetApi="o" />
+                </androidx.cardview.widget.CardView>
+
+                <ImageView
+                    android:id="@+id/img_btn_send"
+                    android:elevation="7dp"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:background="@drawable/bg_circle"
+                    android:paddingTop="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingLeft="14dp"
+                    android:paddingBottom="14dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="7dp"
+                    app:srcCompat="@drawable/ic_send"
+                    android:contentDescription="@string/todo" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ChatBot</string>
+    <string name="ask_from_chatbot">Ask from Chatbot</string>
+    <string name="todo">TODO</string>
+    <string name="send">Send</string>
+    <string name="type_message_here">Type message here</string>
+    <string name="type_something">Type Something</string>
+    <string name="connected">Connected to Internet</string>
+    <string name="not_connected">Not Connected to Internet</string>
+    <string name="check_internet">Please check your internet connection and try again</string>
+    <string name="chat_bot">ChatBot</string>
+
+</resources>
